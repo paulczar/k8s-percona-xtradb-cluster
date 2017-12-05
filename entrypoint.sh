@@ -7,9 +7,11 @@ fi
 
 ipaddr=$(hostname -i | awk ' { print $1 } ')
 hostname=$(hostname)
+echo "I AM $hostname - $ipaddr"
 
 # if LOG_TO_STDOUT is set then symlink mysqld.log to stdout
 if [[ -n "${LOG_TO_STDOUT}" ]]; then
+  echo "symlinking stdout to /varlog/mysqld.log"
   ln -fs /dev/stdout /var/log/mysqld.log
 fi
 
@@ -20,11 +22,20 @@ fi
 
 # sane defaults if using kubernetes for service discovery
 if [[ "$DISCOVERY_SERVICE" == "kubernetes" ]]; then
+  echo "Preparing to use kubernetes service discovery"
   CLUSTER_JOIN=""
   K8S_SERVICE_NAME=${K8S_SERVICE_NAME:-"percona-galera-xtradb"}
   CLUSTER_NAME=${CLUSTER_NAME:-"${K8S_SERVICE_NAME}"}
   if ! ping -c 1 "${K8S_SERVICE_NAME}"; then
     PRIMARY_NODE="true"
+    echo "I am the Primary Node"
+  else
+    echo "I am not the Primary Node"
+  fi
+else
+  if [[ -z "$CLUSTER_JOIN" ]]; then
+    PRIMARY_NODE="true"
+    echo "I am probably the Primary Node"
   fi
 fi
 
@@ -38,7 +49,7 @@ DATADIR="$("mysqld" --verbose --wsrep_provider= --help 2>/dev/null | awk '$1 == 
 
 # if we have CLUSTER_JOIN - then we do not need to perform datadir initialize
 # the data will be copied from another node
-if [[ -z "$CLUSTER_JOIN" || -n "$PRIMARY_NODE" ]]; then
+if [[ "$PRIMARY_NODE" == "true" ]]; then
 
   if [ ! -e "$DATADIR/mysql" ]; then
   	if [ -z "$MYSQL_ROOT_PASSWORD" -a -z "$MYSQL_ALLOW_EMPTY_PASSWORD" -a -z "$MYSQL_RANDOM_ROOT_PASSWORD" -a -z "$MYSQL_ROOT_PASSWORD_FILE" ]; then
