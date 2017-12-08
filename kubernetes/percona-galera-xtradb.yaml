@@ -5,7 +5,7 @@ metadata:
     app: percona-galera
   name: percona-galera
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: percona-galera
@@ -28,8 +28,6 @@ spec:
           value: percona-galera-xtradb
         - name: LOG_TO_STDOUT
           value: "true"
-        - name: DISCOVERY_SERVICE
-          value: kubernetes
         - name: DEBUG
           value: "true"
         livenessProbe:

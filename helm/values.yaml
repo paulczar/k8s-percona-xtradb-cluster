@@ -15,7 +15,7 @@ mysqlPassword: test
 
 ## Allow unauthenticated access, uncomment to enable
 ##
-mysqlAllowEmptyPassword: true
+#mysqlAllowEmptyPassword: true
 
 ## Create a database
 ##
