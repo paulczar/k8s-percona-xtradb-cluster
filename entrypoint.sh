@@ -31,6 +31,7 @@ if [[ -z "${cluster_join}" ]]; then
     --wsrep_node_address="$ipaddr" $CMDARG
 else
   echo "I am not the Primary Node"
+  chown -R mysql:mysql /var/lib/mysql
   write_password_file
   exec mysqld --user=mysql --wsrep_cluster_name=$CLUSTER_NAME --wsrep_node_name=$hostname \
     --wsrep_cluster_address="gcomm://$cluster_join" --wsrep_sst_method=xtrabackup-v2 \
