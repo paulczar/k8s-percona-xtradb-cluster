@@ -16,6 +16,10 @@ if [ "${1:0:1}" = '-' ]; then
 	CMDARG="$@"
 fi
 
+[ -f /var/log/mysqld.log ] && rm /var/log/mysqld.log
+ln -s /dev/stdout /var/log/mysqld.log
+chown mysql:mysql /var/log/mysqld.log
+
 cluster_join=$(resolveip -s "${K8S_SERVICE_NAME}" || echo "")
 if [[ -z "${cluster_join}" ]]; then
   echo "I am the Primary Node"
