@@ -29,8 +29,6 @@ if [ ! -e "$DATADIR/mysql" ]; then
 	echo "Running --initialize-insecure on $DATADIR"
 	ls -lah $DATADIR
 	mysqld --initialize-insecure
-	chown -R mysql:mysql "$DATADIR"
-	chown mysql:mysql /var/log/mysqld.log
 	echo 'Finished --initialize-insecure'
 
 	mysqld --user=mysql --datadir="$DATADIR" --skip-networking &
